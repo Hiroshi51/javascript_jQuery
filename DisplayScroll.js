@@ -1,5 +1,5 @@
 (function($){
-       $.fn.backToTop = function(config){
+       $.fn.displayScroll = function(config){
             $this = this;
             $window = $(window);
             function displayScroll(){
