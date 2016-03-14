@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+
+</head>
+<body>
+<textarea id="post" rows="10" cols="100"></textarea>
+<a id="add" href="#">ADD</a>  <a id="merge" href="#">MERGE</a>
+<div id="content">
+</div>
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<style>
+textarea.textEditor{
+	display: none;
+}
+.padagraph{
+    background: #eee;
+    width: 703px;
+    padding: 10px;
+}
+</style>
+<script type="text/javascript">
+var main = function(){
+    btn = {};
+    var eachPostCounter = 0; 
+    $('a#add').on('click',function(event){
+		event.preventDefault;
+		var postId = "eachPost" + eachPostCounter;
+		var postText = $('#post').val();
+        var insert = "<div class=\'padagraph\'><textarea class=\'textEditor\'></textarea><div class=\'"+postId+" eachText\'></div><a href=\'#\' class=\'edit\'>edit</a></div>";                      
+        $('#content').append(insert);
+        var $postId = $('.'+postId+'');
+        var $editBtnId = $postId.siblings('a.edit');
+        eachTextEmitter($postId,postText);
+        makeEditWorks($editBtnId);
+        eachPostCounter++;
+    });
+    function eachTextEmitter($post,val){
+        $post.text(val);
+    }
+    function makeEditWorks($editBtnId){
+		$editBtnId.on('click',function(event){
+			event.preventDefault;
+			$(this).siblings('textarea').toggle();
+		});
+    }
+
+    $('a#merge').on('click',function(event){
+        var mergeText = "";
+        $('.eachText').each(function(){
+
+             mergeText = mergeText + $(this).text();
+             console.log(mergeText);
+
+
+        }); 
+    });
+};
+$(document).ready(main);
+</script>
+</body>
+</html>
