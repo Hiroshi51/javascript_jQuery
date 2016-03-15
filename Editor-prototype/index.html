@@ -9,50 +9,101 @@
 <div id="content">
 </div>
 <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <style>
+*{
+    word-wrap: break-word;
+}
 textarea.textEditor{
 	display: none;
+    width:650px;
 }
 .padagraph{
     background: #eee;
+    border-bottom:1px #ccc dotted;
     width: 703px;
     padding: 10px;
+    position: relative;
+}
+a.edit{
+    position: absolute;
+    right: 60px;
+    top: 16px;
+}
+a.delete{
+    position: absolute;
+    right: 6px;
+    top: 16px;
+}
+.eachText{
+    width:620px;
+}
+.eachText img{
+    width:100px;
 }
 </style>
+ <script>
+  $(function() {
+    $( "#content" ).sortable();
+    $( "#content" ).disableSelection();
+  });
+  </script>
 <script type="text/javascript">
 var main = function(){
     btn = {};
     var eachPostCounter = 0; 
     $('a#add').on('click',function(event){
 		event.preventDefault;
-		var postId = "eachPost" + eachPostCounter;
-		var postText = $('#post').val();
-        var insert = "<div class=\'padagraph\'><textarea class=\'textEditor\'></textarea><div class=\'"+postId+" eachText\'></div><a href=\'#\' class=\'edit\'>edit</a></div>";                      
-        $('#content').append(insert);
-        var $postId = $('.'+postId+'');
-        var $editBtnId = $postId.siblings('a.edit');
-        eachTextEmitter($postId,postText);
-        makeEditWorks($editBtnId);
-        eachPostCounter++;
+        var postText = $('#post').val();
+        if(postText != ""){
+        	var postId = "eachPost" + eachPostCounter;
+            var insert = "<div class=\'padagraph\'><textarea class=\'textEditor\'></textarea><div class=\'"+postId+" eachText\'></div><a href=\'#\' class=\'edit\'>edit</a><a href=\'#\' class=\'delete\'>x</a></div>";                      
+            $('#content').append(insert);
+            var $postId      = $('.'+postId+'');
+            var $editBtnId   = $postId.siblings('a.edit');
+            var $deleteBtnId = $postId.siblings('a.delete');
+            eachTextEmitter($postId,postText);
+            makeEditWorks($editBtnId);
+            makeDeleteWorks($deleteBtnId);
+            $('#post').val("");
+            eachPostCounter++;
+        }
     });
-    function eachTextEmitter($post,val){
-        $post.text(val);
+
+    function eachTextEmitter($post,postText){
+        postText  = postText.replace(/\r\n/g, '\n');
+        postText  = postText.replace(/\r/g, '\n');
+        var lines = postText.split('\n');
+        console.log(lines);
+        var replacedText = lines.join("<br>");
+        $post.html(replacedText);
     }
+
     function makeEditWorks($editBtnId){
 		$editBtnId.on('click',function(event){
 			event.preventDefault;
+            var targetText = $(this).siblings('.eachText').text();
+            $(this).siblings('textarea').text(targetText);
 			$(this).siblings('textarea').toggle();
 		});
+        $('.padagraph').children('textarea').on('keyup',function(){
+            var targetText = $(this).val();
+            $(this).siblings('.eachText').text(targetText);
+        });
     }
 
+    function makeDeleteWorks($deleteBtnId){
+        $deleteBtnId.on('click',function(event){
+            event.preventDefault;
+            console.log("working");
+            $(this).parent().remove();
+        });
+    }
     $('a#merge').on('click',function(event){
         var mergeText = "";
         $('.eachText').each(function(){
-
-             mergeText = mergeText + $(this).text();
+             mergeText = mergeText + '<p>'+$(this).html()+'</p>';
              console.log(mergeText);
-
-
         }); 
     });
 };
